@@ -1,4 +1,4 @@
-django==5.0
-django-unfold
+django>=5.2,<6.0
+django-unfold==0.94.0
 psycopg2-binary
 whitenoise

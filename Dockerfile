@@ -1,5 +1,5 @@
 # Usando uma imagem base oficial e leve do Python
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Configurações para o Python não salvar arquivos .pyc e não reter buffers de saída
 ENV PYTHONDONTWRITEBYTECODE=1

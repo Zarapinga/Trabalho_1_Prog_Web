@@ -1,5 +1,5 @@
 services:
-  # Serviço do Banco de Dados Relacional (Garante +10% de bônus)
+  # Serviço do Banco de Dados Relacional
   db:
     image: postgres:15-alpine
     container_name: planejamento_db_container
@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Serviço da Aplicação Django (Garante +10% de bônus por conteinerização)
+  # Serviço da Aplicação Django
   web:
     build: .
     container_name: planejamento_web_container

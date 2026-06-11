@@ -32,8 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "unfold",
-    "unfold.contrib.filters",
+    "grappelli",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -43,6 +42,9 @@ INSTALLED_APPS = [
     "financas",
     "usuarios"
 ]
+
+# Título exibido no cabeçalho e na aba do navegador do admin Grappelli
+GRAPPELLI_ADMIN_TITLE = "Planejamento Financeiro"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -60,7 +62,8 @@ ROOT_URLCONF = "planejamento.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        # Pasta de templates do projeto (base.html e demais templates globais)
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -74,6 +77,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "planejamento.wsgi.application"
+
+# Mapeia os níveis de mensagem do Django para as classes de alerta do Bootstrap 5
+# (o nível "error" do Django corresponde ao "danger" do Bootstrap).
+from django.contrib.messages import constants as messages_constants  # noqa: E402
+
+MESSAGE_TAGS = {
+    messages_constants.DEBUG: "secondary",
+    messages_constants.INFO: "info",
+    messages_constants.SUCCESS: "success",
+    messages_constants.WARNING: "warning",
+    messages_constants.ERROR: "danger",
+}
 
 
 # Database
@@ -144,3 +159,14 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Autenticação do usuário final
+# https://docs.djangoproject.com/en/5.0/ref/settings/#auth
+
+# Para onde @login_required / LoginRequiredMixin redirecionam quem não está logado.
+LOGIN_URL = "usuarios:login"
+# Para onde ir após login bem-sucedido (dashboard consolidado do usuário).
+LOGIN_REDIRECT_URL = "financas:dashboard"
+# Para onde ir após o logout.
+LOGOUT_REDIRECT_URL = "usuarios:login"

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -103,6 +105,59 @@ class SimulacaoInvestimento(models.Model):
 
         if errors:
             raise ValidationError(errors)
+
+    def calcular_montante(self):
+        """Calcula o resultado da simulação por juros compostos com aportes mensais.
+
+        A taxa anual informada (em %) é convertida na taxa mensal equivalente:
+
+            i_mensal = (1 + i_anual) ** (1/12) - 1
+
+        O montante final é a soma de duas parcelas:
+
+        1. O ``valor_inicial`` capitalizado por ``periodo_meses``:
+               valor_inicial * (1 + i_mensal) ** meses
+        2. O valor futuro de uma série de ``aporte_mensal`` (aportes ao fim de
+           cada mês), pela fórmula do valor futuro de uma série de pagamentos:
+               aporte_mensal * (((1 + i_mensal) ** meses - 1) / i_mensal)
+           Quando i_mensal == 0, a série degenera para aporte_mensal * meses.
+
+        Retorna um dicionário com:
+            - ``montante_final``: patrimônio acumulado ao fim do período;
+            - ``total_aportado``: valor_inicial + aporte_mensal * meses;
+            - ``juros_ganhos``: montante_final - total_aportado.
+
+        Todos os valores são ``Decimal`` quantizados em 2 casas decimais.
+        """
+        meses = int(self.periodo_meses or 0)
+        valor_inicial = Decimal(self.valor_inicial or 0)
+        aporte_mensal = Decimal(self.aporte_mensal or 0)
+        taxa_anual = Decimal(self.taxa_juros_anual or 0)
+
+        # Cálculo interno em float pela exponenciação fracionária; o resultado é
+        # reconvertido para Decimal e quantizado no fim.
+        i_anual = float(taxa_anual) / 100.0
+        i_mensal = (1.0 + i_anual) ** (1.0 / 12.0) - 1.0
+
+        principal_futuro = float(valor_inicial) * ((1.0 + i_mensal) ** meses)
+
+        if i_mensal == 0:
+            aportes_futuros = float(aporte_mensal) * meses
+        else:
+            fator = ((1.0 + i_mensal) ** meses - 1.0) / i_mensal
+            aportes_futuros = float(aporte_mensal) * fator
+
+        montante_final = Decimal(principal_futuro + aportes_futuros)
+        total_aportado = valor_inicial + aporte_mensal * meses
+        juros_ganhos = montante_final - total_aportado
+
+        centavo = Decimal("0.01")
+        return {
+            "taxa_mensal": Decimal(i_mensal * 100).quantize(Decimal("0.0001")),
+            "montante_final": montante_final.quantize(centavo),
+            "total_aportado": total_aportado.quantize(centavo),
+            "juros_ganhos": juros_ganhos.quantize(centavo),
+        }
 
     def __str__(self):
         return f"{self.titulo} - {self.periodo_meses} meses"

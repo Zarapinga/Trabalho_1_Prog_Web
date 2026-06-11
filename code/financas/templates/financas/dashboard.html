@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Painel — Planejamento Financeiro{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">Painel</h1>
+        <p class="text-muted mb-0">
+            Olá, <strong>{{ user.username }}</strong>! Resumo financeiro de
+            {{ mes_referencia|date:"F/Y" }}.
+        </p>
+    </div>
+</div>
+
+<!-- Indicadores em cards responsivos -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted">Saldo consolidado</h2>
+                <p class="display-6 mb-0">R$ {{ saldo_total|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="card h-100 shadow-sm border-success">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted">Receitas do mês</h2>
+                <p class="display-6 mb-0 text-success">R$ {{ receitas_mes|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="card h-100 shadow-sm border-danger">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted">Despesas do mês</h2>
+                <p class="display-6 mb-0 text-danger">R$ {{ despesas_mes|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted">Saldo do mês</h2>
+                <p class="display-6 mb-0 {% if saldo_mes < 0 %}text-danger{% else %}text-success{% endif %}">
+                    R$ {{ saldo_mes|floatformat:2 }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Progresso rumo à meta de patrimônio -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Progresso rumo à meta de patrimônio</h2>
+        {% if meta_patrimonio > 0 %}
+            <div class="d-flex justify-content-between mb-1">
+                <span>R$ {{ saldo_total|floatformat:2 }} de R$ {{ meta_patrimonio|floatformat:2 }}</span>
+                <span><strong>{{ progresso|floatformat:1 }}%</strong></span>
+            </div>
+            <div class="progress" role="progressbar" aria-label="Progresso da meta"
+                 aria-valuenow="{{ progresso_barra|stringformat:'f' }}" aria-valuemin="0" aria-valuemax="100"
+                 style="height: 1.5rem;">
+                <div class="progress-bar {% if progresso >= 100 %}bg-success{% endif %}"
+                     style="width: {{ progresso_barra|stringformat:'f' }}%;">
+                    {{ progresso|floatformat:1 }}%
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">
+                Você ainda não definiu uma meta de patrimônio.
+                <a href="{% url 'financas:perfil_update' %}">Defina sua meta no perfil</a>.
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- (Opcional) Gráfico de receitas x despesas do mês -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Receitas x Despesas do mês</h2>
+        <canvas id="graficoReceitasDespesas" height="100"></canvas>
+    </div>
+</div>
+
+<!-- Atalhos -->
+<div class="row g-2">
+    <div class="col-auto">
+        <a href="{% url 'financas:conta_list' %}" class="btn btn-outline-primary">Minhas contas</a>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'financas:transacao_list' %}" class="btn btn-outline-primary">Minhas transações</a>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'financas:simulacao_list' %}" class="btn btn-outline-primary">Simulações</a>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'financas:perfil_update' %}" class="btn btn-outline-secondary">Editar perfil financeiro</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+    const ctx = document.getElementById('graficoReceitasDespesas');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Receitas', 'Despesas'],
+            datasets: [{
+                label: 'R$ no mês',
+                data: [{{ receitas_mes|stringformat:"f" }}, {{ despesas_mes|stringformat:"f" }}],
+                backgroundColor: ['rgba(25, 135, 84, 0.7)', 'rgba(220, 53, 69, 0.7)'],
+                borderColor: ['rgb(25, 135, 84)', 'rgb(220, 53, 69)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
+        }
+    });
+</script>
+{% endblock %}

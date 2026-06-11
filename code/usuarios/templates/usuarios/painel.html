@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Painel — Planejamento Financeiro{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3">Painel</h1>
+        <p class="text-muted">
+            Olá, <strong>{{ user.username }}</strong>! Esta é a sua área protegida por login.
+        </p>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-md-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted">Renda mensal</h2>
+                <p class="display-6 mb-0">
+                    R$ {{ user.perfilusuario.renda_mensal|default:"0,00" }}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted">Meta de patrimônio</h2>
+                <p class="display-6 mb-0">
+                    R$ {{ user.perfilusuario.meta_patrimonio|default:"0,00" }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-2 mt-3">
+    <div class="col-auto">
+        <a href="{% url 'financas:conta_list' %}" class="btn btn-outline-primary">Minhas contas</a>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'financas:transacao_list' %}" class="btn btn-outline-primary">Minhas transações</a>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'financas:categoria_list' %}" class="btn btn-outline-primary">Categorias</a>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'financas:perfil_update' %}" class="btn btn-outline-secondary">Editar perfil financeiro</a>
+    </div>
+</div>
+
+<div class="row g-2 mt-1">
+    <div class="col-auto">
+        <a href="{% url 'financas:dashboard' %}" class="btn btn-primary">Ir para o painel consolidado</a>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'financas:simulacao_list' %}" class="btn btn-outline-primary">Simulações de investimento</a>
+    </div>
+</div>
+{% endblock %}

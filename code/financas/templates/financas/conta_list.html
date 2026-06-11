@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Contas Bancárias — Planejamento Financeiro{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Contas Bancárias</h1>
+    <a href="{% url 'financas:conta_create' %}" class="btn btn-primary">+ Nova conta</a>
+</div>
+
+{% if contas %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th class="text-end">Saldo Atual (R$)</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for conta in contas %}
+            <tr>
+                <td>{{ conta.nome }}</td>
+                <td class="text-end">{{ conta.saldo_atual }}</td>
+                <td class="text-end">
+                    <a href="{% url 'financas:conta_update' conta.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                    <a href="{% url 'financas:conta_delete' conta.pk %}" class="btn btn-sm btn-outline-danger">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    Você ainda não cadastrou nenhuma conta bancária.
+</div>
+{% endif %}
+{% endblock %}

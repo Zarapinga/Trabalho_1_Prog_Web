@@ -16,8 +16,14 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 urlpatterns = [
+    # As URLs do Grappelli devem vir ANTES das URLs do admin
+    path("grappelli/", include("grappelli.urls")),
     path("admin/", admin.site.urls),
+    # Área de autenticação e páginas do usuário final
+    path("contas/", include("usuarios.urls")),
+    # CRUD do domínio financeiro (Etapa C)
+    path("financas/", include("financas.urls")),
 ]

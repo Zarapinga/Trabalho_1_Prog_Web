@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib import admin
-from django.core.exceptions import ValidationError
-from unfold.admin import ModelAdmin, TabularInline
+from django.contrib.admin import ModelAdmin, TabularInline
 from .models import ContaBancaria, Categoria, Transacao, SimulacaoInvestimento
 
 

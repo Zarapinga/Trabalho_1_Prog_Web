@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Transações — Planejamento Financeiro{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Transações</h1>
+    <a href="{% url 'financas:transacao_create' %}" class="btn btn-primary">+ Nova transação</a>
+</div>
+
+{% if transacoes %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Conta</th>
+                <th>Categoria</th>
+                <th>Tipo</th>
+                <th class="text-end">Valor (R$)</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transacoes %}
+            <tr>
+                <td>{{ t.data }}</td>
+                <td>{{ t.descricao }}</td>
+                <td>{{ t.conta.nome }}</td>
+                <td>{{ t.categoria.nome }}</td>
+                <td>
+                    {% if t.tipo == 'RECEITA' %}
+                        <span class="badge text-bg-success">{{ t.get_tipo_display }}</span>
+                    {% else %}
+                        <span class="badge text-bg-danger">{{ t.get_tipo_display }}</span>
+                    {% endif %}
+                </td>
+                <td class="text-end">{{ t.valor }}</td>
+                <td class="text-end">
+                    <a href="{% url 'financas:transacao_update' t.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                    <a href="{% url 'financas:transacao_delete' t.pk %}" class="btn btn-sm btn-outline-danger">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    Você ainda não registrou nenhuma transação.
+</div>
+{% endif %}
+{% endblock %}

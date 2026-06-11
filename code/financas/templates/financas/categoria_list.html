@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Categorias — Planejamento Financeiro{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Categorias</h1>
+    <a href="{% url 'financas:categoria_create' %}" class="btn btn-primary">+ Nova categoria</a>
+</div>
+
+<p class="text-muted">
+    As categorias são um catálogo compartilhado por todos os usuários.
+</p>
+
+{% if categorias %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categoria in categorias %}
+            <tr>
+                <td>{{ categoria.nome }}</td>
+                <td>
+                    {% if categoria.tipo == 'RECEITA' %}
+                        <span class="badge text-bg-success">{{ categoria.get_tipo_display }}</span>
+                    {% else %}
+                        <span class="badge text-bg-danger">{{ categoria.get_tipo_display }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    Nenhuma categoria cadastrada ainda.
+</div>
+{% endif %}
+{% endblock %}

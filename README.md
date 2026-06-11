@@ -7,7 +7,7 @@ O projeto atende aos requisitos do Trabalho Prático 1, incluindo a modelagem re
 
 ## Funcionalidades Prontas (Checkpoint 1)
 - **Modelagem Completa de Banco de Dados**: Tabelas de Perfil, Contas Bancárias, Categorias, Transações e Simulação, conectadas via chaves estrangeiras (`ForeignKey` e `OneToOneField`).
-- **Ambiente Administrativo Protegido e Moderno**: Configurado com a biblioteca `django-unfold` e validações de regras de negócios na gestão de finanças diretamente no Admin.
+- **Ambiente Administrativo Protegido e Moderno**: Configurado com a biblioteca `django-grappelli` e validações de regras de negócios na gestão de finanças diretamente no Admin.
 - **Banco de Dados Relacional**: Integrado nativamente com PostgreSQL e com integridade de dados assegurada.
 - **Conteinerização com Docker**: Arquitetura padronizada via `docker-compose` e `Dockerfile` abrangendo serviços web (Django) e DB (Postgres).
 
